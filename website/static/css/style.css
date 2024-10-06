@@ -345,7 +345,8 @@
 .bg-breadcrumb {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(rgba(1, 95, 201, 0.9), rgba(0, 0, 0, 0.2)), url(../img/bg-breadcrumb.jpg);
+    /* background: linear-gradient(rgba(1, 95, 201, 0.9), rgba(0, 0, 0, 0.2)), url(../img/bg-breadcrumb.jpg); */
+    background: linear-gradient(rgba(61, 163, 185, 0.9), rgba(0, 0, 0, 0.2)), url(../img/bg-breadcrumb.jpg);
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -886,4 +887,14 @@
 }
 /*** copyright end ***/
 
+/* Ensure the body takes up the full height of the viewport */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* Make sure the content area grows to push the footer to the bottom */
+.flex-grow-1 {
+    flex-grow: 1;
+}
 

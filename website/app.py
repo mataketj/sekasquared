@@ -6,9 +6,9 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
-@app.route('/about')
-def about():
-    return render_template('about.html')
+@app.route('/index')
+def index():
+    return render_template('index.html')
 
 @app.route('/services')
 def services():
@@ -17,6 +17,23 @@ def services():
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
+
+@app.route('/testimonial')
+def testimonial():
+    return render_template('testimonial.html')
+
+@app.route('/team')
+def team():
+    return render_template('team.html')
+
+@app.route('/blog')
+def blog():
+    return render_template('blog.html')
+
+@app.route('/session')
+def session():
+    return render_template('session.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
