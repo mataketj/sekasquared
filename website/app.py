@@ -1,9 +1,10 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, request, flash, redirect, url_for
 from flask_wtf import FlaskForm
 from wtforms import  StringField, IntegerField, SubmitField, TextAreaField
-from wtforms.validators import  DataRequired
+from wtforms.validators import DataRequired, Email
 from dotenv import load_dotenv
+from flask_mail import Mail, Message
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -12,6 +13,16 @@ app = Flask(__name__)
 
 # Set the secret key from the environment variable
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+
+# Flask-Mail configuration
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')  # Set your Gmail email as an environment variable
+app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')  # Set your Gmail password (or app-specific password) as an environment variable
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
+mail = Mail(app)
 
 #create a form class
 class NamerForm(FlaskForm):
@@ -53,20 +64,62 @@ def team():
 def blog():
     return render_template('blog.html')
 
-@app.route('/session', methods = ['GET', 'POST'])
+# @app.route('/session', methods = ['GET', 'POST'])
+# def session():
+#     form = SessionForm()
+#     #Validate Form
+#     if form.validate_on_submit():
+#         form.first_name.data = ''
+#         form.last_name.data = ''
+#         form.email.data = ''
+#         form.company_name.data = ''
+#         form.company_url.data = ''
+#         form.company_size.data = ''
+#         form.comment.data = ''
+#     return render_template('session.html',
+#                            form = form)
+
+@app.route('/session', methods=['GET', 'POST'])
 def session():
     form = SessionForm()
-    #Validate Form
     if form.validate_on_submit():
-        form.first_name.data = ''
-        form.last_name.data = ''
-        form.email.data = ''
-        form.company_name.data = ''
-        form.company_url.data = ''
-        form.company_size.data = ''
-        form.comment.data = ''
-    return render_template('session.html',
-                           form = form)
+        # Email content
+        subject = f"New Session Request from {form.first_name.data} {form.last_name.data}"
+        sender_email = form.email.data
+        message_body = f"""
+        First Name: {form.first_name.data}
+        Last Name: {form.last_name.data}
+        Email: {form.email.data}
+        Company Name: {form.company_name.data}
+        Company URL: {form.company_url.data}
+        Company Size: {form.company_size.data}
+        Comments: {form.comment.data}
+        """
+
+        # Sending the email
+        msg = Message(subject=subject,
+                      sender=app.config['MAIL_USERNAME'],
+                      recipients=[app.config['MAIL_USERNAME']])  # Send to your own business email
+        msg.body = message_body
+
+        try:
+            mail.send(msg)
+            flash('Your message has been sent successfully!', 'success')
+        except Exception as e:
+            flash(f'Failed to send message. Error: {str(e)}', 'danger')
+
+        # # Clear form data (optional)
+        # form.first_name.data = ''
+        # form.last_name.data = ''
+        # form.email.data = ''
+        # form.company_name.data = ''
+        # form.company_url.data = ''
+        # form.company_size.data = ''
+        # form.comment.data = ''
+
+        return redirect(url_for('session'))
+
+    return render_template('session.html', form=form)
 
 #invalid URL
 @app.errorhandler(404)
