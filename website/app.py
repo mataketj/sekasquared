@@ -1,11 +1,17 @@
+import os
 from flask import Flask, render_template
 from flask_wtf import FlaskForm
 from wtforms import  StringField, IntegerField, SubmitField, TextAreaField
 from wtforms.validators import  DataRequired
+from dotenv import load_dotenv
+
+# Load environment variables from the .env file
+load_dotenv()
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = "testmysecretkey"
+# Set the secret key from the environment variable
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 #create a form class
 class NamerForm(FlaskForm):
